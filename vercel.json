@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm install && npx prisma generate && next build",
+  "buildCommand": "npx prisma generate && next build",
   "installCommand": "npm install --no-audit --no-fund",
   "framework": "nextjs"
 }
