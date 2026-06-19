@@ -1,9 +1,16 @@
 import OpenAI from "openai"
 
-export const sumopod = new OpenAI({
-  apiKey: process.env.SUMOPOD_API_KEY,
-  baseURL: "https://ai.sumopod.com/v1",
-})
+let _sumopod: OpenAI | null = null
+
+function getSumoPod(): OpenAI {
+  if (!_sumopod) {
+    _sumopod = new OpenAI({
+      apiKey: process.env.SUMOPOD_API_KEY,
+      baseURL: "https://ai.sumopod.com/v1",
+    })
+  }
+  return _sumopod
+}
 
 export const MODELS = {
   classify: "gemini-2.5-flash",
@@ -18,7 +25,7 @@ export async function classifyFunnel(content: string): Promise<{
   tone: string
   reasoning: string
 }> {
-  const res = await sumopod.chat.completions.create({
+  const res = await getSumoPod().chat.completions.create({
     model: MODELS.classify,
     messages: [
       {
@@ -65,7 +72,7 @@ export async function analyzePatterns(posts: Array<{ content: string; views: num
   topTopics: string[]
   recommendations: string[]
 }> {
-  const res = await sumopod.chat.completions.create({
+  const res = await getSumoPod().chat.completions.create({
     model: MODELS.analyze,
     messages: [
       {
@@ -104,7 +111,7 @@ export async function generateInsights(context: {
   strategyTip: string
   gapWarning: string | null
 }> {
-  const res = await sumopod.chat.completions.create({
+  const res = await getSumoPod().chat.completions.create({
     model: MODELS.insight,
     messages: [
       {
@@ -140,7 +147,7 @@ export async function detectContentGaps(context: {
   underperformingStages: string[]
   nicheOpportunities: Array<{ topic: string; angle: string }>
 }> {
-  const res = await sumopod.chat.completions.create({
+  const res = await getSumoPod().chat.completions.create({
     model: MODELS.insight,
     messages: [
       {
@@ -178,7 +185,7 @@ export async function generateContentBrief(prompt: {
   estimatedWordCount: number
   bestTimeToPost: string
 }> {
-  const res = await sumopod.chat.completions.create({
+  const res = await getSumoPod().chat.completions.create({
     model: MODELS.insight,
     messages: [
       {
